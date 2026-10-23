@@ -1,474 +1,1126 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Auditoría Satelital Hidroeléctrica - Ecuador</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Leaflet CSS & JS for Interactive Satellite Maps -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  
-  <!-- Chart.js for Hydrological & Generation Comparative Analytics -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
-    }
-    .glass-card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecuador Hydro-Satellite Auditor | Sistema de Inspección Física e Hidrológica Independiente</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hydro: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49'
+                        },
+                        darkbg: '#0f172a',
+                        cardbg: '#1e293b',
+                        borderbg: '#334155'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Leaflet CSS & JS for Satellite Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Chart.js for Technical Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Inter & JetBrains Mono Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .leaflet-container {
+            background-color: #0f172a !important;
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-leaflet-popup .leaflet-popup-content-wrapper {
+            background: #1e293b;
+            color: #f1f5f9;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        .custom-leaflet-popup .leaflet-popup-tip {
+            background: #1e293b;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col custom-scrollbar">
+<body class="min-h-screen flex flex-col antialiased selection:bg-hydro-500 selection:text-white">
 
-  <!-- Header & Navigation Bar -->
-  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-filter backdrop-blur-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-          <i class="fa-solid fa-satellite-dish text-white text-lg"></i>
+    <!-- TOP HEADER / NAV -->
+    <header class="bg-cardbg/80 backdrop-blur-md border-b border-borderbg sticky top-0 z-50 px-4 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center space-x-3">
+            <div class="p-2.5 bg-hydro-600/20 border border-hydro-500/40 rounded-xl text-hydro-500">
+                <i class="fa-solid fa-satellite-dish text-xl animate-pulse"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight tracking-wide text-white flex items-center gap-2">
+                    ECUADOR HYDRO-SATELLITE AUDITOR
+                    <span class="text-xs bg-hydro-950 text-hydro-500 border border-hydro-500/30 px-2 py-0.5 rounded-full font-mono font-medium">INDEPENDENT v2.0</span>
+                </h1>
+                <p class="text-xs text-slate-400">Plataforma Ciudadana e Independiente de Inspección Satelital y Física de Turbinas</p>
+            </div>
         </div>
-        <div>
-          <h1 class="font-bold text-lg leading-tight tracking-wide text-white">HIDRO-MONITOR ECUADOR</h1>
-          <p class="text-xs text-cyan-400 font-medium">Auditoría Satelital, Física y Climatológica Independiente</p>
+
+        <div class="flex flex-wrap items-center gap-3">
+            <!-- Data Source Switcher -->
+            <div class="bg-darkbg border border-borderbg rounded-lg p-1 flex items-center text-xs">
+                <button id="btn-src-sim" onclick="setDataSource('simulated')" class="px-3 py-1.5 rounded-md font-medium transition-all bg-hydro-600 text-white shadow">
+                    <i class="fa-solid fa-bolt mr-1.5"></i>Simulador Activo
+                </button>
+                <button id="btn-src-json" onclick="triggerFileInput()" class="px-3 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition-all">
+                    <i class="fa-solid fa-file-code mr-1.5"></i>Cargar audit_report.json
+                </button>
+                <input type="file" id="json-file-input" class="hidden" accept=".json,.csv" onchange="handleFileUpload(event)">
+            </div>
+
+            <!-- Status Indicator -->
+            <div class="hidden sm:flex items-center space-x-2 bg-darkbg border border-borderbg px-3 py-1.5 rounded-lg text-xs font-mono">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="text-slate-300" id="sync-timestamp">Sincronizado: --:--:--</span>
+            </div>
+
+            <!-- Export Dropdown -->
+            <div class="relative inline-block text-left">
+                <button onclick="toggleExportMenu()" class="bg-hydro-600 hover:bg-hydro-500 text-white font-medium text-xs px-3.5 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg shadow-hydro-600/20">
+                    <i class="fa-solid fa-download"></i> Exportar Dataset
+                    <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                </button>
+                <div id="export-menu" class="hidden absolute right-0 mt-2 w-48 bg-cardbg border border-borderbg rounded-xl shadow-2xl z-50 overflow-hidden text-xs">
+                    <button onclick="exportToJSON()" class="w-full text-left px-4 py-2.5 hover:bg-slate-700/50 flex items-center gap-2 text-slate-200">
+                        <i class="fa-solid fa-file-json text-amber-400"></i> Descargar JSON (.json)
+                    </button>
+                    <button onclick="exportToCSV()" class="w-full text-left px-4 py-2.5 hover:bg-slate-700/50 flex items-center gap-2 text-slate-200 border-t border-borderbg/50">
+                        <i class="fa-solid fa-file-csv text-emerald-400"></i> Descargar CSV (.csv)
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-      
-      <!-- System Status Badges -->
-      <div class="hidden md:flex items-center space-x-4 text-xs">
-        <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-slate-300 font-medium">Sentinel-2 / Open-Meteo Active</span>
-        </div>
-        <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700">
-          <i class="fa-solid fa-tower-observation text-amber-400"></i>
-          <span class="text-slate-300">Cruze CELEC / CENACE Live</span>
-        </div>
-        <button onclick="refreshData()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition">
-          <i class="fa-solid fa-rotate-right"></i>
-          <span>Sincronizar</span>
+    </header>
+
+    <!-- NAVIGATION TABS -->
+    <div class="bg-darkbg border-b border-borderbg px-4 lg:px-8 py-2 flex overflow-x-auto gap-2">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 bg-hydro-600 text-white transition-all">
+            <i class="fa-solid fa-chart-pie"></i> Panel de Monitoreo & Mapa
         </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-
-    <!-- Top Key Metrics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      
-      <!-- Card 1: Hidroeléctrica Total -->
-      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Potencia Teórica Satelital</p>
-            <h3 class="text-2xl font-bold text-white mt-1" id="metric-sat-power">2,618.5 <span class="text-sm font-normal text-slate-400">MW</span></h3>
-          </div>
-          <div class="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            <i class="fa-solid fa-bolt text-lg"></i>
-          </div>
-        </div>
-        <div class="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-          <span class="text-slate-400">Capacidad Total Evaluada:</span>
-          <span class="text-slate-200 font-semibold">3,257 MW</span>
-        </div>
-      </div>
-
-      <!-- Card 2: Reporte Oficial CELEC/CENACE -->
-      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Reporte Oficial (CELEC/CENACE)</p>
-            <h3 class="text-2xl font-bold text-white mt-1" id="metric-official-power">1,730.0 <span class="text-sm font-normal text-slate-400">MW</span></h3>
-          </div>
-          <div class="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
-            <i class="fa-solid fa-building-columns text-lg"></i>
-          </div>
-        </div>
-        <div class="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-          <span class="text-slate-400">Brecha de Generación:</span>
-          <span class="text-amber-400 font-semibold" id="metric-gap">-888.5 MW (-33.9%)</span>
-        </div>
-      </div>
-
-      <!-- Card 3: Precipitación Cuencas Alta -->
-      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Precipitación Acum. (Lluvias)</p>
-            <h3 class="text-2xl font-bold text-white mt-1" id="metric-rain">18.4 <span class="text-sm font-normal text-slate-400">mm/24h</span></h3>
-          </div>
-          <div class="p-2.5 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
-            <i class="fa-solid fa-cloud-showers-heavy text-lg"></i>
-          </div>
-        </div>
-        <div class="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-          <span class="text-slate-400">Aporte a Embalses:</span>
-          <span class="text-emerald-400 font-semibold">Recuperación Moderada</span>
-        </div>
-      </div>
-
-      <!-- Card 4: Alerta de Sedimentos / NDTI -->
-      <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Alerta Sedimentos (NDTI)</p>
-            <h3 class="text-2xl font-bold text-rose-400 mt-1" id="metric-sediment">ALTO RIESGO</h3>
-          </div>
-          <div class="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
-            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-          </div>
-        </div>
-        <div class="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
-          <span class="text-slate-400">Afectación en:</span>
-          <span class="text-slate-200 font-semibold">Coca Codo Sinclair</span>
-        </div>
-      </div>
-
+        <button onclick="switchTab('simulator')" id="tab-simulator" class="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-400 hover:bg-cardbg hover:text-white transition-all">
+            <i class="fa-solid fa-sliders"></i> Simulador Físico & Auditor
+        </button>
+        <button onclick="switchTab('methodology')" id="tab-methodology" class="px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-400 hover:bg-cardbg hover:text-white transition-all">
+            <i class="fa-solid fa-book-bookmark"></i> Metodología Satelital & Física
+        </button>
     </div>
 
-    <!-- Central Section: Interactive Map + Real-time Hydro Table -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      
-      <!-- Interactive Map Section -->
-      <div class="lg:col-span-7 glass-card rounded-2xl p-4 flex flex-col h-[480px]">
-        <div class="flex justify-between items-center mb-3">
-          <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-earth-americas text-cyan-400"></i>
-            <h2 class="font-bold text-white text-sm">Monitoreo Satelital Geoespacial (Sentinel-2 / Landsat)</h2>
-          </div>
-          <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700">Ecuador - Cuencas Hidrográficas</span>
-        </div>
-        <div id="map" class="w-full flex-1 rounded-xl z-10"></div>
-      </div>
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 p-4 lg:p-6 max-w-[1800px] w-full mx-auto space-y-6">
 
-      <!-- Hydro Comparative Table -->
-      <div class="lg:col-span-5 glass-card rounded-2xl p-4 flex flex-col h-[480px]">
-        <div class="flex justify-between items-center mb-3">
-          <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-list-check text-blue-400"></i>
-            <h2 class="font-bold text-white text-sm">Matriz Triangulada de Auditoría</h2>
-          </div>
-          <span class="text-xs text-slate-400">4 Centrales Clave</span>
-        </div>
+        <!-- TAB 1: DASHBOARD -->
+        <div id="view-dashboard" class="space-y-6">
+            
+            <!-- KEY METRICS SUMMARY ROW -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-cardbg border border-borderbg rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Potencia Física Teórica Total</p>
+                        <h3 class="text-2xl font-bold text-white mt-1 font-mono" id="stat-total-calculated">0 MW</h3>
+                        <p class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+                            <i class="fa-solid fa-calculator"></i> Modelo Físico $P = \eta \rho g Q H$
+                        </p>
+                    </div>
+                    <div class="p-3 bg-hydro-500/10 border border-hydro-500/20 text-hydro-400 rounded-xl">
+                        <i class="fa-solid fa-bolt text-2xl"></i>
+                    </div>
+                </div>
 
-        <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 space-y-3" id="plants-container">
-          <!-- Hydro plant items will be populated dynamically -->
-        </div>
-      </div>
+                <div class="bg-cardbg border border-borderbg rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Reporte Oficial CELEC/CENACE</p>
+                        <h3 class="text-2xl font-bold text-slate-200 mt-1 font-mono" id="stat-total-reported">0 MW</h3>
+                        <p class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+                            <i class="fa-solid fa-building-columns"></i> Datos Operativos
+                        </p>
+                    </div>
+                    <div class="p-3 bg-slate-700/20 border border-slate-600/30 text-slate-300 rounded-xl">
+                        <i class="fa-solid fa-tower-broadcast text-2xl"></i>
+                    </div>
+                </div>
 
-    </div>
+                <div class="bg-cardbg border border-borderbg rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Brecha de Generación (Discrepancia)</p>
+                        <h3 class="text-2xl font-bold text-amber-400 mt-1 font-mono" id="stat-discrepancy">0 MW</h3>
+                        <p class="text-[11px] text-amber-300/80 mt-1 flex items-center gap-1" id="stat-discrepancy-status">
+                            <i class="fa-solid fa-triangle-exclamation"></i> En tolerancia
+                        </p>
+                    </div>
+                    <div class="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-xl">
+                        <i class="fa-solid fa-chart-line text-2xl"></i>
+                    </div>
+                </div>
 
-    <!-- Analytics & Hydrological Comparison Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      
-      <!-- Chart 1: Physical vs Official Generation Comparison -->
-      <div class="glass-card rounded-2xl p-4 flex flex-col h-80">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-chart-column text-cyan-400"></i>
-            <h3 class="text-sm font-bold text-white">Física Satelital Teórica vs Generación Oficial (MW)</h3>
-          </div>
-          <div class="flex items-center space-x-3 text-xs">
-            <span class="flex items-center space-x-1 text-cyan-400"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block"></span> <span>Teórica</span></span>
-            <span class="flex items-center space-x-1 text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-slate-500 inline-block"></span> <span>Reportada</span></span>
-          </div>
-        </div>
-        <div class="flex-1 relative">
-          <canvas id="generationChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Chart 2: Rainfall & Reservoir Level Trend -->
-      <div class="glass-card rounded-2xl p-4 flex flex-col h-80">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-cloud-rain text-sky-400"></i>
-            <h3 class="text-sm font-bold text-white">Precipitación en Cuenca (mm) vs Cota de Embalse (msnm)</h3>
-          </div>
-          <span class="text-xs text-slate-400">Complejo Paute (Mazar/Molino)</span>
-        </div>
-        <div class="flex-1 relative">
-          <canvas id="rainfallChart"></canvas>
-        </div>
-      </div>
-
-    </div>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="border-t border-slate-800 bg-slate-900 py-4 text-center text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-      <p>© 2026 Plataforma Independiente de Monitoreo Hidroeléctrico - Ecuador</p>
-      <div class="flex space-x-4">
-        <span class="hover:text-slate-400 transition cursor-pointer">Exportar Dataset CSV</span>
-        <span class="hover:text-slate-400 transition cursor-pointer">Reporte JSON</span>
-        <span class="hover:text-slate-400 transition cursor-pointer">Documentación Técnica</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Dashboard Main Script -->
-  <script>
-    // Initial Dataset based on CELEC / CENACE live cross-referencing and satellite physics
-    const plantData = [
-      {
-        key: "mazar",
-        name: "Embalse Mazar (Paute)",
-        lat: -2.6325,
-        lon: -78.6180,
-        calcPower: 142.5,
-        reportedPower: 0.0,
-        cota: 2122.5,
-        caudal: 110.0,
-        rain: 16.2,
-        sediment: "BAJO (Estructura Limpia)",
-        sedimentColor: "text-emerald-400",
-        status: "SUBGENERACION / RESTRICCION",
-        statusBg: "bg-amber-500/10 text-amber-400 border-amber-500/30"
-      },
-      {
-        key: "paute_molino",
-        name: "Central Paute-Molino",
-        lat: -2.5760,
-        lon: -78.5550,
-        calcPower: 820.0,
-        reportedPower: 520.0,
-        cota: 1975.0,
-        caudal: 105.0,
-        rain: 14.8,
-        sediment: "BAJO",
-        sedimentColor: "text-emerald-400",
-        status: "OPERACION PARCIAL",
-        statusBg: "bg-blue-500/10 text-blue-400 border-blue-500/30"
-      },
-      {
-        key: "sopladora",
-        name: "Central Paute-Sopladora",
-        lat: -2.7840,
-        lon: -78.5320,
-        calcPower: 396.0,
-        reportedPower: 360.0,
-        cota: 1315.4,
-        caudal: 130.0,
-        rain: 18.0,
-        sediment: "MODERADO",
-        sedimentColor: "text-amber-400",
-        status: "NORMAL",
-        statusBg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-      },
-      {
-        key: "coca_codo_sinclair",
-        name: "Central Coca Codo Sinclair",
-        lat: -0.1008,
-        lon: -77.6833,
-        calcPower: 1260.0,
-        reportedPower: 850.0,
-        cota: 1220.0,
-        caudal: 180.0,
-        rain: 24.5,
-        sediment: "ALTO RIESGO DE EROSION",
-        sedimentColor: "text-rose-400",
-        status: "RIESGO DE SEDIMENTOS",
-        statusBg: "bg-rose-500/10 text-rose-400 border-rose-500/30"
-      }
-    ];
-
-    let map, genChart, rainChart;
-
-    // Initialize Map and UI Elements
-    document.addEventListener("DOMContentLoaded", function() {
-      initMap();
-      renderPlantsList();
-      initCharts();
-    });
-
-    function initMap() {
-      // Map centered in Ecuadorian Hydroelectric Region
-      map = L.map('map', { zoomControl: false }).setView([-1.8, -78.2], 7);
-      
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-        maxZoom: 18
-      }).addTo(map);
-
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-      // Add Custom Markers for Hydro Plants
-      plantData.forEach(plant => {
-        const markerHtml = `
-          <div class="relative flex items-center justify-center w-6 h-6">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-cyan-500 border-2 border-white"></span>
-          </div>
-        `;
-        
-        const customIcon = L.divIcon({
-          html: markerHtml,
-          className: 'custom-map-icon',
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
-        });
-
-        const marker = L.marker([plant.lat, plant.lon], { icon: customIcon }).addTo(map);
-        
-        const popupContent = `
-          <div class="p-2 text-slate-900 font-sans">
-            <h4 class="font-bold text-xs text-slate-800">${plant.name}</h4>
-            <p class="text-[11px] text-slate-600 mt-1">Caudal: <b>${plant.caudal} m³/s</b></p>
-            <p class="text-[11px] text-slate-600">P. Teórica Satelital: <b>${plant.calcPower} MW</b></p>
-            <p class="text-[11px] text-slate-600">Reportado Oficial: <b>${plant.reportedPower} MW</b></p>
-            <div class="mt-1 text-[10px] font-semibold text-cyan-700 uppercase">${plant.status}</div>
-          </div>
-        `;
-        marker.bindPopup(popupContent);
-      });
-    }
-
-    function renderPlantsList() {
-      const container = document.getElementById('plants-container');
-      container.innerHTML = '';
-
-      plantData.forEach(plant => {
-        const card = document.createElement('div');
-        card.className = "bg-slate-900/80 rounded-xl p-3 border border-slate-800 hover:border-slate-700 transition space-y-2";
-        
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <h4 class="font-bold text-sm text-white">${plant.name}</h4>
-              <p class="text-xs text-slate-400">Cota / Nivel: <span class="text-slate-200 font-medium">${plant.cota} msnm</span> | Caudal: <span class="text-slate-200 font-medium">${plant.caudal} m³/s</span></p>
+                <div class="bg-cardbg border border-borderbg rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Alerta de Sedimentos / NDTI</p>
+                        <h3 class="text-xl font-bold text-rose-400 mt-1 font-mono" id="stat-sediment-alert">MODERADO</h3>
+                        <p class="text-[11px] text-rose-300/80 mt-1 flex items-center gap-1">
+                            <i class="fa-solid fa-water"></i> Riesgo en Coca Codo
+                        </p>
+                    </div>
+                    <div class="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                    </div>
+                </div>
             </div>
-            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border ${plant.statusBg}">
-              ${plant.status}
-            </span>
-          </div>
 
-          <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-800/60">
-            <div>
-              <span class="text-slate-400">Potencia Teórica Satelital:</span>
-              <p class="text-sm font-bold text-cyan-400">${plant.calcPower} MW</p>
+            <!-- MAP AND PRIMARY CHARTS GRID -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- SATELLITE MAP (FREE OPENSTREETMAP & ESRI TILES ONLY) -->
+                <div class="lg:col-span-7 bg-cardbg border border-borderbg rounded-2xl p-4 flex flex-col h-[520px]">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-hydro-500"></i> Monitoreo Satelital Geoespacial (Ecuador)
+                        </h2>
+                        <div class="flex gap-2">
+                            <button onclick="setMapLayer('satellite')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 border border-borderbg rounded text-slate-300">Satélite ESRI</button>
+                            <button onclick="setMapLayer('terrain')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 border border-borderbg rounded text-slate-300">Topográfico OSM</button>
+                        </div>
+                    </div>
+                    <div id="hydro-map" class="w-full flex-1 rounded-xl border border-borderbg overflow-hidden z-10"></div>
+                </div>
+
+                <!-- MAIN COMPARATIVE CHART -->
+                <div class="lg:col-span-5 bg-cardbg border border-borderbg rounded-2xl p-4 flex flex-col h-[520px]">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced text-hydro-500"></i> Auditoría: Teórico vs. Declarado
+                        </h2>
+                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">MW</span>
+                    </div>
+                    <div class="flex-1 relative w-full h-full">
+                        <canvas id="chart-power-comparison"></canvas>
+                    </div>
+                </div>
             </div>
-            <div>
-              <span class="text-slate-400">Reporte Oficial CELEC:</span>
-              <p class="text-sm font-bold text-slate-200">${plant.reportedPower} MW</p>
+
+            <!-- PLANT CARDS & DETAILED TABLES -->
+            <div class="bg-cardbg border border-borderbg rounded-2xl p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-table-cells text-hydro-500"></i> Matriz Triangulada de Auditoría por Central
+                        </h2>
+                        <p class="text-xs text-slate-400">Cruza Cota ($msnm$), Caudal ($Q$), Lluvia ($mm$), Sedimentos ($NDTI$) y Reporte Oficial</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="plants-cards-container">
+                    <!-- Dynamic Plant Cards Inject Here -->
+                </div>
             </div>
-          </div>
 
-          <div class="flex justify-between items-center text-[11px] pt-1 text-slate-400">
-            <span><i class="fa-solid fa-cloud-rain mr-1 text-sky-400"></i> Lluvia Cuenca: <b class="text-slate-200">${plant.rain} mm</b></span>
-            <span><i class="fa-solid fa-water mr-1 text-amber-400"></i> Sedimentos NDTI: <b class="${plant.sedimentColor}">${plant.sediment}</b></span>
-          </div>
-        `;
-        
-        container.appendChild(card);
-      });
-    }
+            <!-- TIME SERIES & TURBINE STATUS ROW -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Reservoir Hydrograph Trend -->
+                <div class="lg:col-span-8 bg-cardbg border border-borderbg rounded-2xl p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-showers-heavy text-hydro-500"></i> Precipitación en Cuenca ($mm$) vs Cota de Embalse Mazar ($msnm$)
+                        </h2>
+                        <span class="text-[10px] bg-slate-800 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded font-mono">Open-Meteo & Sentinel</span>
+                    </div>
+                    <div class="h-[260px] w-full">
+                        <canvas id="chart-historical-trend"></canvas>
+                    </div>
+                </div>
 
-    function initCharts() {
-      // 1. Generation Comparison Bar Chart
-      const ctxGen = document.getElementById('generationChart').getContext('2d');
-      genChart = new Chart(ctxGen, {
-        type: 'bar',
-        data: {
-          labels: plantData.map(p => p.name.split(' ')[1] || p.name),
-          datasets: [
-            {
-              label: 'Potencia Teórica Satelital (MW)',
-              data: plantData.map(p => p.calcPower),
-              backgroundColor: 'rgba(6, 182, 212, 0.85)',
-              borderRadius: 6
+                <!-- Active Turbines Donut -->
+                <div class="lg:col-span-4 bg-cardbg border border-borderbg rounded-2xl p-4 flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-pie-chart text-hydro-500"></i> Estado Operativo Global
+                        </h2>
+                    </div>
+                    <div class="h-[220px] w-full relative">
+                        <canvas id="chart-turbines-pie"></canvas>
+                    </div>
+                    <p class="text-[11px] text-slate-400 text-center mt-2">
+                        Proporción estimada de turbinas operativas según caudal descargado.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: SIMULATOR & PARAMETER AUDITOR -->
+        <div id="view-simulator" class="hidden space-y-6">
+            <div class="bg-cardbg border border-borderbg rounded-2xl p-6">
+                <div class="max-w-3xl mb-6">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-hydro-500"></i> Simulador e Inspección Físico-Matemática en Tiempo Real
+                    </h2>
+                    <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                        Modifique manualmente las variables hidráulicas de cualquier central para auditar la física de generación $P = \eta \cdot \rho \cdot g \cdot Q \cdot H$ y verificar si el reporte oficial de CELEC/CENACE es técnicamente plausible.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Controls Column -->
+                    <div class="lg:col-span-6 space-y-5 bg-darkbg p-5 rounded-2xl border border-borderbg">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-2">Seleccionar Hidroeléctrica a Auditar:</label>
+                            <select id="sim-plant-select" onchange="loadSimulatorPlantDefaults()" class="w-full bg-cardbg border border-borderbg rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-hydro-500">
+                                <option value="mazar">Embalse Mazar (Complejo Paute)</option>
+                                <option value="paute_molino">Central Paute-Molino</option>
+                                <option value="sopladora">Central Paute-Sopladora</option>
+                                <option value="coca_codo_sinclair">Central Coca Codo Sinclair</option>
+                            </select>
+                        </div>
+
+                        <!-- Slider Q (Flow Rate) -->
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-1.5">
+                                <span class="font-medium text-slate-300">Caudal Eficiente de Entrada ($Q$):</span>
+                                <span class="font-mono text-cyan-400 font-bold" id="sim-val-q">110.0 m³/s</span>
+                            </div>
+                            <input type="range" id="sim-range-q" min="0" max="600" step="1" value="110" oninput="updateSimulation()" class="w-full accent-hydro-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                                <span>0 m³/s</span>
+                                <span>300 m³/s</span>
+                                <span>600 m³/s</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider H (Net Hydraulic Head) -->
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-1.5">
+                                <span class="font-medium text-slate-300">Caída Útil Neta ($H$):</span>
+                                <span class="font-mono text-cyan-400 font-bold" id="sim-val-h">142.0 m</span>
+                            </div>
+                            <input type="range" id="sim-range-h" min="10" max="700" step="1" value="142" oninput="updateSimulation()" class="w-full accent-hydro-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                                <span>10 m</span>
+                                <span>350 m</span>
+                                <span>700 m</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider Efficiency -->
+                        <div>
+                            <div class="flex justify-between items-center text-xs mb-1.5">
+                                <span class="font-medium text-slate-300">Eficiencia Global del Sistema ($\eta$):</span>
+                                <span class="font-mono text-amber-400 font-bold" id="sim-val-eta">90.0 %</span>
+                            </div>
+                            <input type="range" id="sim-range-eta" min="50" max="98" step="0.5" value="90" oninput="updateSimulation()" class="w-full accent-amber-500 bg-slate-700 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <!-- Input Official Reported Power -->
+                        <div class="border-t border-borderbg pt-4">
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Generación Reportada Oficialmente (MW):</label>
+                            <input type="number" id="sim-input-reported" value="85" oninput="updateSimulation()" class="w-full bg-cardbg border border-borderbg rounded-xl px-3.5 py-2 text-sm text-white font-mono focus:outline-none focus:border-hydro-500">
+                            <p class="text-[11px] text-slate-400 mt-1">Suministre la cifra declarada por CELEC/CENACE para contrastar.</p>
+                        </div>
+                    </div>
+
+                    <!-- Live Physics Results Column -->
+                    <div class="lg:col-span-6 space-y-5 flex flex-col justify-between">
+                        <div class="bg-cardbg border border-borderbg rounded-2xl p-6 space-y-6">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Resultado del Cálculo Físico Directo</h3>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-darkbg p-4 rounded-xl border border-borderbg">
+                                    <span class="text-xs text-slate-400">Potencia Físicamente Posible</span>
+                                    <div class="text-3xl font-bold font-mono text-hydro-400 mt-1" id="sim-res-power">0.0 MW</div>
+                                    <span class="text-[10px] text-slate-400 font-mono">P = η · ρ · g · Q · H</span>
+                                </div>
+
+                                <div class="bg-darkbg p-4 rounded-xl border border-borderbg">
+                                    <span class="text-xs text-slate-400">Turbinas Requeridas</span>
+                                    <div class="text-3xl font-bold font-mono text-cyan-400 mt-1" id="sim-res-turbines">0.0 / 0</div>
+                                    <span class="text-[10px] text-slate-400">Basado en capacidad unitaria</span>
+                                </div>
+                            </div>
+
+                            <!-- Anomaly Diagnostic Box -->
+                            <div id="sim-diagnostic-box" class="p-4 rounded-xl border flex items-start gap-3 bg-emerald-950/40 border-emerald-500/40 text-emerald-300">
+                                <i class="fa-solid fa-circle-check text-xl mt-0.5" id="sim-diagnostic-icon"></i>
+                                <div>
+                                    <h4 class="font-bold text-sm" id="sim-diagnostic-title">ESTADO TÉCNICO COMPATIBLE</h4>
+                                    <p class="text-xs mt-1 text-slate-300 leading-relaxed" id="sim-diagnostic-desc">
+                                        La producción declarada concuerda de forma precisa con el volumen hídrico turbinado y la cota del embalse.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-borderbg pt-4 space-y-2">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-400">Factor de Carga Teórico:</span>
+                                    <span class="font-mono font-semibold text-white" id="sim-res-capacity-factor">0 %</span>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-slate-400">Diferencia Absoluta:</span>
+                                    <span class="font-mono font-semibold text-amber-400" id="sim-res-diff-mw">0.0 MW</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="applySimulationToActiveData()" class="w-full bg-hydro-600 hover:bg-hydro-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all text-xs flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate"></i> Aplicar Parámetros de Simulación al Panel General
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: METHODOLOGY & SATELLITE PHYSICS -->
+        <div id="view-methodology" class="hidden space-y-6">
+            <div class="bg-cardbg border border-borderbg rounded-2xl p-6 lg:p-8 space-y-8 max-w-5xl mx-auto">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fa-solid fa-graduation-cap text-hydro-500"></i> Metodología de Inspección Satelital, Física y Climatológica
+                    </h2>
+                    <p class="text-sm text-slate-300 mt-2 leading-relaxed">
+                        Este sistema realiza una **auditoría transparente, fidedigna e independiente** sobre la generación hidroeléctrica en Ecuador. A través del uso de constelaciones de satélites (Copernicus Sentinel-1/2, Landsat-8/9), modelos climáticos de precipitación y física de fluidos, se elimina la dependencia de reportes manipulables.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Tech Block 1 -->
+                    <div class="bg-darkbg border border-borderbg rounded-xl p-5 space-y-3">
+                        <div class="flex items-center gap-3 text-hydro-400">
+                            <i class="fa-solid fa-water text-xl"></i>
+                            <h3 class="font-bold text-white text-base">1. Espejo de Agua y Nivel de Embalse (NDWI)</h3>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Con imágenes multiespectrales de Sentinel-2 se calcula el **Índice de Agua de Diferencia Normalizada (NDWI)**:
+                        </p>
+                        <div class="bg-cardbg p-3 rounded-lg border border-borderbg font-mono text-center text-xs text-cyan-300">
+                            NDWI = (B03 - B08) / (B03 + B08)
+                        </div>
+                        <p class="text-xs text-slate-400">
+                            Con la delimitación del área del embalse ($km^2$) y curvas batimétricas conocidas (Mazar), se determina la cota útil ($msnm$) e independencia de datos.
+                        </p>
+                    </div>
+
+                    <!-- Tech Block 2 -->
+                    <div class="bg-darkbg border border-borderbg rounded-xl p-5 space-y-3">
+                        <div class="flex items-center gap-3 text-amber-400">
+                            <i class="fa-solid fa-square-root-variable text-xl"></i>
+                            <h3 class="font-bold text-white text-base">2. Ecuación Física Fundamental de Potencia</h3>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            La energía hidráulica utilizable en la turbina responde a la física de fluidos incompresibles:
+                        </p>
+                        <div class="bg-cardbg p-3 rounded-lg border border-borderbg font-mono text-center text-xs text-amber-300">
+                            P (Watts) = η · ρ · g · Q · H
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Donde $\eta$ representa la eficiencia global, $\rho = 1000\,kg/m^3$ la densidad del agua, $g = 9.81\,m/s^2$, $Q$ el caudal ($m^3/s$) y $H$ la caída útil ($m$).
+                        </p>
+                    </div>
+
+                    <!-- Tech Block 3 -->
+                    <div class="bg-darkbg border border-borderbg rounded-xl p-5 space-y-3">
+                        <div class="flex items-center gap-3 text-emerald-400">
+                            <i class="fa-solid fa-radar text-xl"></i>
+                            <h3 class="font-bold text-white text-base">3. Interferometría Radar (InSAR - Sentinel-1)</h3>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Las turbinas con desbalance mecánico o fallas por cavitación generan micro-vibraciones estructurales. La tecnología **InSAR (Interferometría Radar)** detecta deformaciones de milímetros en la casa de máquinas a lo largo del tiempo.
+                        </p>
+                    </div>
+
+                    <!-- Tech Block 4 -->
+                    <div class="bg-darkbg border border-borderbg rounded-xl p-5 space-y-3">
+                        <div class="flex items-center gap-3 text-purple-400">
+                            <i class="fa-solid fa-cloud-rain text-xl"></i>
+                            <h3 class="font-bold text-white text-base">4. Ingesta Climatológica y Sedimentos (NDTI)</h3>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Cruza la precipitación en cuencas ($mm$) e índice de sedimentos en suspensión ($NDTI$) para determinar si un paro de turbinas se debe a sequía o a palizadas/sedimentos en captación.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-cardbg border-t border-borderbg py-4 px-6 text-center text-xs text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-hydro-500"></i>
+            <span>Plataforma de Monitoreo Ciudadano e Independiente de Hidroeléctricas del Ecuador</span>
+        </div>
+        <div class="font-mono text-[11px] text-slate-400">
+            Complejo Paute (Mazar - Molino - Sopladora) & Coca Codo Sinclair
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        // ==========================================
+        // 1. GLOBAL STATE & HYDRO PLANT DEFINITIONS
+        // ==========================================
+        const HYDRO_PLANTS = {
+            "mazar": {
+                name: "Embalse Mazar (Paute)",
+                lat: -2.6325,
+                lon: -78.6180,
+                capacity_mw: 170.0,
+                turbines_total: 2,
+                default_head: 142.0,
+                default_flow: 110.0,
+                default_eta: 0.90,
+                default_reported: 0.0,
+                cota_msnm: 2122.5,
+                rain_mm: 16.2,
+                sediment_risk: "BAJO (Limpio)"
             },
-            {
-              label: 'Reporte Oficial CELEC (MW)',
-              data: plantData.map(p => p.reportedPower),
-              backgroundColor: 'rgba(100, 116, 139, 0.7)',
-              borderRadius: 6
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
-          }
-        }
-      });
-
-      // 2. Rainfall & Level Line Chart
-      const ctxRain = document.getElementById('rainfallChart').getContext('2d');
-      rainChart = new Chart(ctxRain, {
-        type: 'line',
-        data: {
-          labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
-          datasets: [
-            {
-              label: 'Precipitación (mm)',
-              data: [2.1, 4.5, 8.2, 14.0, 18.4, 12.1, 9.5],
-              borderColor: '#38bdf8',
-              backgroundColor: 'rgba(56, 189, 248, 0.1)',
-              fill: true,
-              tension: 0.4,
-              yAxisID: 'yRain'
+            "paute_molino": {
+                name: "Central Paute-Molino",
+                lat: -2.5760,
+                lon: -78.5550,
+                capacity_mw: 1100.0,
+                turbines_total: 10,
+                default_head: 620.0,
+                default_flow: 105.0,
+                default_eta: 0.91,
+                default_reported: 520.0,
+                cota_msnm: 1975.0,
+                rain_mm: 14.8,
+                sediment_risk: "BAJO"
             },
-            {
-              label: 'Cota Mazar (msnm)',
-              data: [2121.7, 2121.9, 2122.1, 2122.3, 2122.4, 2122.5, 2122.6],
-              borderColor: '#e2e8f0',
-              borderDash: [4, 4],
-              tension: 0.2,
-              yAxisID: 'yCota'
+            "sopladora": {
+                name: "Central Paute-Sopladora",
+                lat: -2.7840,
+                lon: -78.5320,
+                capacity_mw: 487.0,
+                turbines_total: 3,
+                default_head: 340.0,
+                default_flow: 130.0,
+                default_eta: 0.89,
+                default_reported: 360.0,
+                cota_msnm: 1315.4,
+                rain_mm: 18.0,
+                sediment_risk: "MODERADO"
+            },
+            "coca_codo_sinclair": {
+                name: "Central Coca Codo Sinclair",
+                lat: -0.1008,
+                lon: -77.6833,
+                capacity_mw: 1500.0,
+                turbines_total: 8,
+                default_head: 580.0,
+                default_flow: 180.0,
+                default_eta: 0.88,
+                default_reported: 850.0,
+                cota_msnm: 1220.0,
+                rain_mm: 24.5,
+                sediment_risk: "ALTO RIESGO"
             }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
-            yRain: { type: 'linear', position: 'left', ticks: { color: '#38bdf8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-            yCota: { type: 'linear', position: 'right', ticks: { color: '#e2e8f0', font: { size: 10 } }, grid: { display: false } }
-          }
-        }
-      });
-    }
+        };
 
-    function refreshData() {
-      // Animation pulse feedback for synchronization
-      const btn = event.currentTarget;
-      btn.classList.add('opacity-50');
-      setTimeout(() => {
-        btn.classList.remove('opacity-50');
-      }, 600);
-    }
-  </script>
+        let currentActiveData = [];
+        let leafletMap = null;
+        let mapMarkers = {};
+        let comparisonChart = null;
+        let trendChart = null;
+        let turbinesPieChart = null;
+        let currentMapTileLayer = null;
+
+        // ==========================================
+        // 2. INITIALIZATION ON WINDOW LOAD
+        // ==========================================
+        window.onload = function() {
+            initLeafletMap();
+            loadDefaultSimulatedData();
+            initCharts();
+            updateAllVisualizations();
+            updateTimestamp();
+            loadSimulatorPlantDefaults();
+        };
+
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('sync-timestamp').innerText = `Sincronizado: ${now.toLocaleTimeString()}`;
+        }
+
+        // ==========================================
+        // 3. PHYSICS ENGINE & CALCULATIONS
+        // ==========================================
+        function calculatePhysicalPower(q_flow, h_head, eta_pct, capacity_mw) {
+            const rho = 1000.0;
+            const g = 9.81;
+            const eta = eta_pct / 100.0;
+            const power_watts = eta * rho * g * q_flow * h_head;
+            const power_mw = power_watts / 1e6;
+            return Math.min(power_mw, capacity_mw);
+        }
+
+        function calculateTurbinesActive(calculated_mw, capacity_mw, total_turbines) {
+            if (capacity_mw <= 0) return 0;
+            const mw_per_turbine = capacity_mw / total_turbines;
+            const estimated = calculated_mw / mw_per_turbine;
+            return Math.min(Math.round(estimated * 10) / 10, total_turbines);
+        }
+
+        function evaluateAnomalyStatus(calculated_mw, reported_mw, tolerance_pct = 15.0) {
+            if (calculated_mw <= 0) return { status: 'SIN FLUJO', desc: 'Sin volumen hídrico útil', color: 'slate' };
+            
+            const diff = reported_mw - calculated_mw;
+            const pct = (diff / calculated_mw) * 100;
+
+            if (Math.abs(pct) <= tolerance_pct) {
+                return {
+                    status: 'NORMAL',
+                    desc: 'Generación reportada coincide con el modelo físico.',
+                    color: 'emerald'
+                };
+            } else if (pct < -tolerance_pct) {
+                return {
+                    status: 'SUBGENERACION / RESTRICCION',
+                    desc: 'Hay caudal suficiente para generar más. Posibles turbinas fuera de servicio o deslastre.',
+                    color: 'rose'
+                };
+            } else {
+                return {
+                    status: 'SOBREDECLARACION SOSPECHOSA',
+                    desc: 'La cifra reportada supera el límite físicamente posible para el caudal actual.',
+                    color: 'amber'
+                };
+            }
+        }
+
+        // ==========================================
+        // 4. DATA ENGINE (SIMULATED & FILE LOAD)
+        // ==========================================
+        function loadDefaultSimulatedData() {
+            currentActiveData = [];
+            for (const key in HYDRO_PLANTS) {
+                const plant = HYDRO_PLANTS[key];
+                const calc_mw = calculatePhysicalPower(plant.default_flow, plant.default_head, plant.default_eta * 100, plant.capacity_mw);
+                const active_turb = calculateTurbinesActive(calc_mw, plant.capacity_mw, plant.turbines_total);
+                const anomaly = evaluateAnomalyStatus(calc_mw, plant.default_reported);
+
+                currentActiveData.push({
+                    plant_key: key,
+                    name: plant.name,
+                    lat: plant.lat,
+                    lon: plant.lon,
+                    capacity_mw: plant.capacity_mw,
+                    turbines_total: plant.turbines_total,
+                    flow_m3s: plant.default_flow,
+                    head_m: plant.default_head,
+                    eta_pct: plant.default_eta * 100,
+                    calculated_mw: Math.round(calc_mw * 100) / 100,
+                    reported_mw: plant.default_reported,
+                    active_turbines: active_turb,
+                    cota_msnm: plant.cota_msnm,
+                    rain_mm: plant.rain_mm,
+                    sediment_risk: plant.sediment_risk,
+                    anomaly: anomaly
+                });
+            }
+        }
+
+        function setDataSource(type) {
+            if (type === 'simulated') {
+                document.getElementById('btn-src-sim').className = "px-3 py-1.5 rounded-md font-medium transition-all bg-hydro-600 text-white shadow";
+                document.getElementById('btn-src-json').className = "px-3 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition-all";
+                loadDefaultSimulatedData();
+                updateAllVisualizations();
+                updateTimestamp();
+            }
+        }
+
+        function triggerFileInput() {
+            document.getElementById('json-file-input').click();
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (Array.isArray(parsed)) {
+                        currentActiveData = parsed.map(item => {
+                            const plantKey = item.plant_key || 'mazar';
+                            const plantDef = HYDRO_PLANTS[plantKey] || HYDRO_PLANTS['mazar'];
+                            
+                            const flow = item.satellite_metrics?.estimated_flow_m3s || item.Caudal_m3s || item.flow_m3s || plantDef.default_flow;
+                            const head = item.satellite_metrics?.current_head_m || item.Caida_m || item.head_m || plantDef.default_head;
+                            const calc_mw = item.physical_model?.calculated_power_mw || item.Potencia_Calculada_MW || calculatePhysicalPower(flow, head, 90, plantDef.capacity_mw);
+                            const reported = item.audit_anomaly?.reported_power_mw || item.Reporte_Oficial_MW || item.reported_mw || plantDef.default_reported;
+                            const active_turb = item.physical_model?.estimated_active_turbines || item.Turbinas_Activas || calculateTurbinesActive(calc_mw, plantDef.capacity_mw, plantDef.turbines_total);
+                            const anomaly = evaluateAnomalyStatus(calc_mw, reported);
+
+                            return {
+                                plant_key: plantKey,
+                                name: plantDef.name,
+                                lat: plantDef.lat,
+                                lon: plantDef.lon,
+                                capacity_mw: plantDef.capacity_mw,
+                                turbines_total: plantDef.turbines_total,
+                                flow_m3s: flow,
+                                head_m: head,
+                                eta_pct: 90,
+                                calculated_mw: Math.round(calc_mw * 100) / 100,
+                                reported_mw: reported,
+                                active_turbines: active_turb,
+                                cota_msnm: item.cota_msnm || plantDef.cota_msnm,
+                                rain_mm: item.Precipitacion_mm || plantDef.rain_mm,
+                                sediment_risk: item.Riesgo_Sedimentos || plantDef.sediment_risk,
+                                anomaly: anomaly
+                            };
+                        });
+
+                        document.getElementById('btn-src-json').className = "px-3 py-1.5 rounded-md font-medium transition-all bg-hydro-600 text-white shadow";
+                        document.getElementById('btn-src-sim').className = "px-3 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition-all";
+                        
+                        updateAllVisualizations();
+                        updateTimestamp();
+                    }
+                } catch (err) {
+                    alert('Error al procesar el archivo: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ==========================================
+        // 5. MAP ENGINE (100% FREE ESRI & OSM TILES)
+        // ==========================================
+        function initLeafletMap() {
+            leafletMap = L.map('hydro-map', {
+                zoomControl: true,
+                attributionControl: false
+            }).setView([-1.8, -78.2], 7);
+
+            // Default Satellite Layer (Esri World Imagery - NO API KEY REQUIRED)
+            currentMapTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 17
+            }).addTo(leafletMap);
+        }
+
+        function setMapLayer(type) {
+            if (currentMapTileLayer) leafletMap.removeLayer(currentMapTileLayer);
+
+            if (type === 'satellite') {
+                currentMapTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 17 });
+            } else {
+                currentMapTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 17 });
+            }
+            currentMapTileLayer.addTo(leafletMap);
+        }
+
+        function updateMapMarkers() {
+            for (let k in mapMarkers) {
+                leafletMap.removeLayer(mapMarkers[k]);
+            }
+            mapMarkers = {};
+
+            currentActiveData.forEach(item => {
+                const statusColor = item.anomaly.color === 'emerald' ? '#10b981' : (item.anomaly.color === 'rose' ? '#f43f5e' : '#f59e0b');
+                
+                const customIcon = L.divIcon({
+                    className: 'custom-map-pin',
+                    html: `<div style="background-color: ${statusColor}; width: 22px; height: 22px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 12px ${statusColor}; cursor: pointer;"></div>`,
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 11]
+                });
+
+                const marker = L.marker([item.lat, item.lon], { icon: customIcon }).addTo(leafletMap);
+                
+                const popupContent = `
+                    <div class="custom-leaflet-popup p-1">
+                        <div class="font-bold text-sm text-white mb-1">${item.name}</div>
+                        <div class="text-[11px] text-slate-300 font-mono space-y-1">
+                            <div>Cota / Nivel: <span class="text-slate-200 font-bold">${item.cota_msnm} msnm</span></div>
+                            <div>Caudal ($Q$): <span class="text-cyan-400 font-bold">${item.flow_m3s} m³/s</span></div>
+                            <div>Lluvia Cuenca: <span class="text-sky-400 font-bold">${item.rain_mm} mm</span></div>
+                            <hr class="border-borderbg my-1">
+                            <div>Potencia Física: <span class="text-hydro-400 font-bold">${item.calculated_mw} MW</span></div>
+                            <div>Reporte Oficial: <span class="text-slate-200 font-bold">${item.reported_mw} MW</span></div>
+                            <div class="mt-1 pt-1 font-sans text-[10px] font-bold text-${item.anomaly.color}-400">
+                                [${item.anomaly.status}]
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent);
+                mapMarkers[item.plant_key] = marker;
+            });
+        }
+
+        // ==========================================
+        // 6. CHART.JS VISUALIZATION ENGINE
+        // ==========================================
+        function initCharts() {
+            // 1. Power Comparison Bar Chart
+            const ctxComp = document.getElementById('chart-power-comparison').getContext('2d');
+            comparisonChart = new Chart(ctxComp, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Potencia Física Teórica (MW)',
+                            data: [],
+                            backgroundColor: 'rgba(14, 165, 233, 0.85)',
+                            borderColor: '#0ea5e9',
+                            borderWidth: 1.5,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Reporte Oficial CELEC (MW)',
+                            data: [],
+                            backgroundColor: 'rgba(148, 163, 184, 0.4)',
+                            borderColor: '#94a3b8',
+                            borderWidth: 1.5,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#cbd5e1', font: { family: 'Inter', size: 11 } } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } }, grid: { color: '#334155' } }
+                    }
+                }
+            });
+
+            // 2. Historical Reservoir Trend Line Chart
+            const ctxTrend = document.getElementById('chart-historical-trend').getContext('2d');
+            trendChart = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                    datasets: [
+                        {
+                            label: 'Precipitación Cuenca (mm)',
+                            data: [2.1, 4.5, 8.2, 14.0, 18.4, 12.1, 9.5],
+                            borderColor: '#38bdf8',
+                            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                            fill: true,
+                            tension: 0.35,
+                            yAxisID: 'yRain'
+                        },
+                        {
+                            label: 'Cota Embalse Mazar (msnm)',
+                            data: [2121.7, 2121.9, 2122.1, 2122.3, 2122.4, 2122.5, 2122.6],
+                            borderColor: '#e2e8f0',
+                            borderDash: [4, 4],
+                            tension: 0.2,
+                            yAxisID: 'yCota'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#cbd5e1', font: { size: 11 } } } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#334155' } },
+                        yRain: { type: 'linear', position: 'left', ticks: { color: '#38bdf8', font: { size: 10 } }, grid: { color: '#334155' } },
+                        yCota: { type: 'linear', position: 'right', ticks: { color: '#e2e8f0', font: { size: 10 } }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // 3. Turbines Status Pie Chart
+            const ctxPie = document.getElementById('chart-turbines-pie').getContext('2d');
+            turbinesPieChart = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Turbinas Operativas', 'Turbinas Inactivas/Falla'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#0ea5e9', '#334155'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 10 } } } },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        // ==========================================
+        // 7. UI REFRESH & SYNCHRONIZATION
+        // ==========================================
+        function updateAllVisualizations() {
+            let totalCalc = 0;
+            let totalRep = 0;
+            let totalTurbinesActive = 0;
+            let totalTurbinesMax = 0;
+
+            currentActiveData.forEach(item => {
+                totalCalc += item.calculated_mw;
+                totalRep += item.reported_mw;
+                totalTurbinesActive += item.active_turbines;
+                totalTurbinesMax += item.turbines_total;
+            });
+
+            document.getElementById('stat-total-calculated').innerText = `${totalCalc.toFixed(1)} MW`;
+            document.getElementById('stat-total-reported').innerText = `${totalRep.toFixed(1)} MW`;
+            
+            const diffMW = totalRep - totalCalc;
+            const statDiscrepancy = document.getElementById('stat-discrepancy');
+            statDiscrepancy.innerText = `${diffMW > 0 ? '+' : ''}${diffMW.toFixed(1)} MW`;
+
+            // Update Map Pins
+            updateMapMarkers();
+
+            // Update Comparison Bar Chart
+            comparisonChart.data.labels = currentActiveData.map(d => d.name.replace('Central ', ''));
+            comparisonChart.data.datasets[0].data = currentActiveData.map(d => d.calculated_mw);
+            comparisonChart.data.datasets[1].data = currentActiveData.map(d => d.reported_mw);
+            comparisonChart.update();
+
+            // Update Turbines Pie Chart
+            const inactiveTurbines = Math.max(0, totalTurbinesMax - Math.round(totalTurbinesActive));
+            turbinesPieChart.data.datasets[0].data = [Math.round(totalTurbinesActive), inactiveTurbines];
+            turbinesPieChart.update();
+
+            // Update Plant Cards Grid
+            renderPlantCards();
+        }
+
+        function renderPlantCards() {
+            const container = document.getElementById('plants-cards-container');
+            container.innerHTML = '';
+
+            currentActiveData.forEach(item => {
+                const card = document.createElement('div');
+                const colorClass = item.anomaly.color === 'emerald' ? 'emerald' : (item.anomaly.color === 'rose' ? 'rose' : 'amber');
+
+                card.className = `bg-darkbg border border-borderbg rounded-xl p-4 flex flex-col justify-between space-y-3`;
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-sm text-white">${item.name}</h3>
+                            <span class="text-[10px] bg-${colorClass}-500/10 text-${colorClass}-400 border border-${colorClass}-500/30 px-2 py-0.5 rounded font-bold">
+                                ${item.anomaly.status}
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">${item.anomaly.desc}</p>
+                    </div>
+
+                    <div class="space-y-2 border-t border-borderbg/60 pt-3 text-xs font-mono">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Cota / Nivel:</span>
+                            <span class="text-slate-200 font-bold">${item.cota_msnm} msnm</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Caudal ($Q$):</span>
+                            <span class="text-cyan-400 font-bold">${item.flow_m3s} m³/s</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Física Teórica:</span>
+                            <span class="text-hydro-400 font-bold">${item.calculated_mw} MW</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Reporte CELEC:</span>
+                            <span class="text-slate-200 font-bold">${item.reported_mw} MW</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-borderbg/60 pt-2 flex justify-between items-center text-[11px]">
+                        <span class="text-slate-400"><i class="fa-solid fa-cloud-rain text-sky-400 mr-1"></i>${item.rain_mm} mm</span>
+                        <span class="text-rose-400 font-bold"><i class="fa-solid fa-water mr-1"></i>${item.sediment_risk}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // 8. INTERACTIVE SIMULATOR LOGIC
+        // ==========================================
+        function loadSimulatorPlantDefaults() {
+            const selectedKey = document.getElementById('sim-plant-select').value;
+            const plant = HYDRO_PLANTS[selectedKey];
+
+            document.getElementById('sim-range-q').max = Math.round(plant.default_flow * 3);
+            document.getElementById('sim-range-q').value = plant.default_flow;
+            document.getElementById('sim-range-h').value = plant.default_head;
+            document.getElementById('sim-range-eta').value = plant.default_eta * 100;
+            document.getElementById('sim-input-reported').value = plant.default_reported;
+
+            updateSimulation();
+        }
+
+        function updateSimulation() {
+            const selectedKey = document.getElementById('sim-plant-select').value;
+            const plant = HYDRO_PLANTS[selectedKey];
+
+            const q = parseFloat(document.getElementById('sim-range-q').value);
+            const h = parseFloat(document.getElementById('sim-range-h').value);
+            const eta = parseFloat(document.getElementById('sim-range-eta').value);
+            const reported = parseFloat(document.getElementById('sim-input-reported').value) || 0;
+
+            document.getElementById('sim-val-q').innerText = `${q.toFixed(1)} m³/s`;
+            document.getElementById('sim-val-h').innerText = `${h.toFixed(1)} m`;
+            document.getElementById('sim-val-eta').innerText = `${eta.toFixed(1)} %`;
+
+            const calculated_mw = calculatePhysicalPower(q, h, eta, plant.capacity_mw);
+            const active_turbines = calculateTurbinesActive(calculated_mw, plant.capacity_mw, plant.turbines_total);
+            const anomaly = evaluateAnomalyStatus(calculated_mw, reported);
+
+            document.getElementById('sim-res-power').innerText = `${calculated_mw.toFixed(1)} MW`;
+            document.getElementById('sim-res-turbines').innerText = `${active_turbines} / ${plant.turbines_total}`;
+            
+            const capFactor = (calculated_mw / plant.capacity_mw) * 100;
+            document.getElementById('sim-res-capacity-factor').innerText = `${capFactor.toFixed(1)} %`;
+
+            const diffMW = reported - calculated_mw;
+            document.getElementById('sim-res-diff-mw').innerText = `${diffMW > 0 ? '+' : ''}${diffMW.toFixed(1)} MW`;
+
+            // Diagnostic Box Update
+            const diagBox = document.getElementById('sim-diagnostic-box');
+            const diagIcon = document.getElementById('sim-diagnostic-icon');
+            const diagTitle = document.getElementById('sim-diagnostic-title');
+            const diagDesc = document.getElementById('sim-diagnostic-desc');
+
+            if (anomaly.color === 'emerald') {
+                diagBox.className = "p-4 rounded-xl border flex items-start gap-3 bg-emerald-950/40 border-emerald-500/40 text-emerald-300";
+                diagIcon.className = "fa-solid fa-circle-check text-xl mt-0.5";
+            } else if (anomaly.color === 'rose') {
+                diagBox.className = "p-4 rounded-xl border flex items-start gap-3 bg-rose-950/40 border-rose-500/40 text-rose-300";
+                diagIcon.className = "fa-solid fa-triangle-exclamation text-xl mt-0.5";
+            } else {
+                diagBox.className = "p-4 rounded-xl border flex items-start gap-3 bg-amber-950/40 border-amber-500/40 text-amber-300";
+                diagIcon.className = "fa-solid fa-circle-exclamation text-xl mt-0.5";
+            }
+
+            diagTitle.innerText = anomaly.status;
+            diagDesc.innerText = anomaly.desc;
+        }
+
+        function applySimulationToActiveData() {
+            const selectedKey = document.getElementById('sim-plant-select').value;
+            const q = parseFloat(document.getElementById('sim-range-q').value);
+            const h = parseFloat(document.getElementById('sim-range-h').value);
+            const eta = parseFloat(document.getElementById('sim-range-eta').value);
+            const reported = parseFloat(document.getElementById('sim-input-reported').value) || 0;
+
+            const target = currentActiveData.find(d => d.plant_key === selectedKey);
+            if (target) {
+                target.flow_m3s = q;
+                target.head_m = h;
+                target.eta_pct = eta;
+                target.reported_mw = reported;
+                target.calculated_mw = Math.round(calculatePhysicalPower(q, h, eta, target.capacity_mw) * 100) / 100;
+                target.active_turbines = calculateTurbinesActive(target.calculated_mw, target.capacity_mw, target.turbines_total);
+                target.anomaly = evaluateAnomalyStatus(target.calculated_mw, reported);
+
+                updateAllVisualizations();
+                switchTab('dashboard');
+            }
+        }
+
+        // ==========================================
+        // 9. TAB NAVIGATION & EXPORT ENGINE
+        // ==========================================
+        function switchTab(tabId) {
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-simulator').classList.add('hidden');
+            document.getElementById('view-methodology').classList.add('hidden');
+
+            document.getElementById('tab-dashboard').className = "px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-400 hover:bg-cardbg hover:text-white transition-all";
+            document.getElementById('tab-simulator').className = "px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-400 hover:bg-cardbg hover:text-white transition-all";
+            document.getElementById('tab-methodology').className = "px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 text-slate-400 hover:bg-cardbg hover:text-white transition-all";
+
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).className = "px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 bg-hydro-600 text-white transition-all";
+
+            if (tabId === 'dashboard' && leafletMap) {
+                setTimeout(() => leafletMap.invalidateSize(), 200);
+            }
+        }
+
+        function toggleExportMenu() {
+            const menu = document.getElementById('export-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function exportToJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentActiveData, null, 4));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `ecuador_hydro_audit_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            toggleExportMenu();
+        }
+
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Plant_Key,Plant_Name,Caudal_m3s,Caida_m,Potencia_Calculada_MW,Reporte_Oficial_MW,Turbinas_Activas,Precipitacion_mm,Riesgo_Sedimentos,Estado_Auditoria\n";
+
+            currentActiveData.forEach(d => {
+                csvContent += `"${d.plant_key}","${d.name}",${d.flow_m3s},${d.head_m},${d.calculated_mw},${d.reported_mw},${d.active_turbines},${d.rain_mm},"${d.sediment_risk}","${d.anomaly.status}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `ecuador_hydro_audit_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toggleExportMenu();
+        }
+    </script>
 </body>
 </html>
