@@ -1,5 +1,3 @@
-# config.py
-
 HYDRO_PLANTS = {
     "mazar": {
         "name": "Embalse Mazar (Complejo Paute)",
@@ -8,7 +6,7 @@ HYDRO_PLANTS = {
         "nominal_capacity_mw": 170.0,
         "turbines_count": 2,
         "max_hydraulic_head_m": 158.0,
-        "min_operational_level_msnm": 2115.0, # Nivel crítico de operación
+        "min_operational_level_msnm": 2115.0,
         "max_operational_level_msnm": 2153.0,
         "efficiency_factor": 0.90
     },
