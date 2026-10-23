@@ -1,6 +1,5 @@
 # config.py
 
-# Coordenadas geográficas y parámetros nominales de las centrales
 HYDRO_PLANTS = {
     "mazar": {
         "name": "Embalse Mazar (Complejo Paute)",
@@ -8,8 +7,10 @@ HYDRO_PLANTS = {
         "lon": -78.6180,
         "nominal_capacity_mw": 170.0,
         "turbines_count": 2,
-        "max_hydraulic_head_m": 158.0,  # Altura de caída nominal
-        "efficiency_factor": 0.90       # Eficiencia general (turbina + generador)
+        "max_hydraulic_head_m": 158.0,
+        "min_operational_level_msnm": 2115.0, # Nivel crítico de operación
+        "max_operational_level_msnm": 2153.0,
+        "efficiency_factor": 0.90
     },
     "paute_molino": {
         "name": "Central Paute-Molino",
@@ -19,6 +20,15 @@ HYDRO_PLANTS = {
         "turbines_count": 10,
         "max_hydraulic_head_m": 660.0,
         "efficiency_factor": 0.91
+    },
+    "sopladora": {
+        "name": "Central Paute-Sopladora",
+        "lat": -2.7840,
+        "lon": -78.5320,
+        "nominal_capacity_mw": 487.0,
+        "turbines_count": 3,
+        "max_hydraulic_head_m": 340.0,
+        "efficiency_factor": 0.89
     },
     "coca_codo_sinclair": {
         "name": "Central Coca Codo Sinclair",
@@ -31,6 +41,5 @@ HYDRO_PLANTS = {
     }
 }
 
-# Constantes físicas
-DENSITY_WATER_KG_M3 = 1000.0  # ρ (kg/m³)
-GRAVITY_M_S2 = 9.81           # g (m/s²)
+DENSITY_WATER_KG_M3 = 1000.0
+GRAVITY_M_S2 = 9.81
