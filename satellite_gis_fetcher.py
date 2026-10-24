@@ -1,6 +1,8 @@
 # satellite_gis_fetcher.py
 import rasterio
-from rasterio.windows import window_from_bounds
+from rasterio.windows import Window
+# En lugar de usar window_from_bounds(left, bottom, right, right, transform), 
+# se calcula directamente con Window.from_slices o la clase Window:
 import numpy as np
 from config import HYDRO_PLANTS
 
