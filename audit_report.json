@@ -2,105 +2,129 @@
     {
         "plant_key": "mazar",
         "plant_name": "Embalse Mazar (Complejo Paute)",
-        "timestamp": "2026-10-23T11:16:29.143166+00:00",
-        "basin_rainfall_mm": 5.0,
+        "timestamp": "2026-10-24T02:03:56.922580+00:00",
+        "gis_satellite_data": {
+            "raster_source": "Copernicus Sentinel-2 L2A (Cloud Optimized GeoTIFF)",
+            "mean_ndwi": 0.6618936555178306,
+            "water_area_km2": 5.0,
+            "derived_water_level_msnm": 2124.0
+        },
+        "basin_rainfall_mm": 3.0,
         "sediment_analysis": {
-            "ndti_value": 0.163,
+            "ndti_value": 0.171,
             "sediment_risk": "MODERADO (Monitorear desarenadores)"
         },
         "physical_model": {
             "plant_name": "Embalse Mazar (Complejo Paute)",
-            "calculated_power_mw": 137.91,
+            "calculated_power_mw": 170.0,
             "nominal_capacity_mw": 170.0,
-            "capacity_factor_pct": 81.12,
-            "estimated_active_turbines": 1.6,
+            "capacity_factor_pct": 100.0,
+            "estimated_active_turbines": 2.0,
             "total_turbines": 2
         },
         "audit_anomaly": {
             "status": "SUBGENERACION / POSIBLE FALLA",
-            "calculated_power_mw": 137.91,
+            "calculated_power_mw": 170.0,
             "reported_power_mw": 0.0,
-            "difference_mw": -137.91,
+            "difference_mw": -170.0,
             "discrepancy_pct": -100.0,
-            "description": "La central reporta 0.0 MW frente a una física teórica de 137.91 MW."
+            "description": "La central reporta 0.0 MW frente a una física teórica de 170.0 MW."
         }
     },
     {
         "plant_key": "paute_molino",
         "plant_name": "Central Paute-Molino",
-        "timestamp": "2026-10-23T11:16:29.675040+00:00",
-        "basin_rainfall_mm": 27.0,
+        "timestamp": "2026-10-24T02:03:57.431485+00:00",
+        "gis_satellite_data": {
+            "raster_source": "Copernicus Sentinel-2 L2A (Cloud Optimized GeoTIFF)",
+            "mean_ndwi": 0.6618936555178306,
+            "water_area_km2": 5.0,
+            "derived_water_level_msnm": 2009.0
+        },
+        "basin_rainfall_mm": 29.0,
         "sediment_analysis": {
-            "ndti_value": 0.163,
+            "ndti_value": 0.171,
             "sediment_risk": "MODERADO (Monitorear desarenadores)"
         },
         "physical_model": {
             "plant_name": "Central Paute-Molino",
-            "calculated_power_mw": 581.15,
+            "calculated_power_mw": 795.4,
             "nominal_capacity_mw": 1100.0,
-            "capacity_factor_pct": 52.83,
-            "estimated_active_turbines": 5.3,
+            "capacity_factor_pct": 72.31,
+            "estimated_active_turbines": 7.2,
             "total_turbines": 10
         },
         "audit_anomaly": {
-            "status": "NORMAL",
-            "calculated_power_mw": 581.15,
+            "status": "SUBGENERACION / POSIBLE FALLA",
+            "calculated_power_mw": 795.4,
             "reported_power_mw": 520.0,
-            "difference_mw": -61.15,
-            "discrepancy_pct": -10.52,
-            "description": "La producción reportada coincide con la capacidad física disponible."
+            "difference_mw": -275.4,
+            "discrepancy_pct": -34.62,
+            "description": "La central reporta 520.0 MW frente a una física teórica de 795.4 MW."
         }
     },
     {
         "plant_key": "sopladora",
         "plant_name": "Central Paute-Sopladora",
-        "timestamp": "2026-10-23T11:16:30.180337+00:00",
-        "basin_rainfall_mm": 4.9,
+        "timestamp": "2026-10-24T02:03:57.974946+00:00",
+        "gis_satellite_data": {
+            "raster_source": "Copernicus Sentinel-2 L2A (Cloud Optimized GeoTIFF)",
+            "mean_ndwi": 0.6618936555178306,
+            "water_area_km2": 5.0,
+            "derived_water_level_msnm": 2009.0
+        },
+        "basin_rainfall_mm": 5.2,
         "sediment_analysis": {
-            "ndti_value": 0.163,
+            "ndti_value": 0.171,
             "sediment_risk": "MODERADO (Monitorear desarenadores)"
         },
         "physical_model": {
             "plant_name": "Central Paute-Sopladora",
-            "calculated_power_mw": 385.91,
+            "calculated_power_mw": 400.75,
             "nominal_capacity_mw": 487.0,
-            "capacity_factor_pct": 79.24,
-            "estimated_active_turbines": 2.4,
+            "capacity_factor_pct": 82.29,
+            "estimated_active_turbines": 2.5,
             "total_turbines": 3
         },
         "audit_anomaly": {
             "status": "NORMAL",
-            "calculated_power_mw": 385.91,
+            "calculated_power_mw": 400.75,
             "reported_power_mw": 360.0,
-            "difference_mw": -25.91,
-            "discrepancy_pct": -6.71,
+            "difference_mw": -40.75,
+            "discrepancy_pct": -10.17,
             "description": "La producción reportada coincide con la capacidad física disponible."
         }
     },
     {
         "plant_key": "coca_codo_sinclair",
         "plant_name": "Central Coca Codo Sinclair",
-        "timestamp": "2026-10-23T11:16:30.752621+00:00",
-        "basin_rainfall_mm": 24.1,
+        "timestamp": "2026-10-24T02:03:58.528613+00:00",
+        "gis_satellite_data": {
+            "raster_source": "Copernicus Sentinel-2 L2A (Cloud Optimized GeoTIFF)",
+            "mean_ndwi": 0.6618936555178306,
+            "water_area_km2": 5.0,
+            "derived_water_level_msnm": 2009.0
+        },
+        "basin_rainfall_mm": 20.1,
         "sediment_analysis": {
-            "ndti_value": 0.163,
+            "ndti_value": 0.171,
             "sediment_risk": "MODERADO (Monitorear desarenadores)"
         },
         "physical_model": {
             "plant_name": "Central Coca Codo Sinclair",
-            "calculated_power_mw": 901.26,
+            "calculated_power_mw": 722.57,
             "nominal_capacity_mw": 1500.0,
-            "capacity_factor_pct": 60.08,
-            "estimated_active_turbines": 4.8,
+            "capacity_factor_pct": 48.17,
+            "estimated_active_turbines": 3.9,
             "total_turbines": 8
         },
         "audit_anomaly": {
-            "status": "NORMAL",
-            "calculated_power_mw": 901.26,
+            "status": "SOBREDECLARACION",
+            "calculated_power_mw": 722.57,
             "reported_power_mw": 850.0,
-            "difference_mw": -51.26,
-            "discrepancy_pct": -5.69,
-            "description": "La producción reportada coincide con la capacidad física disponible."
+            "difference_mw": 127.43,
+            "discrepancy_pct": 17.64,
+            "description": "La generación reportada supera el límite físicamente posible."
         }
     }
 ]
