@@ -565,14 +565,13 @@
         let turbinesPieChart = null;
         let currentMapTileLayer = null;
 
-        // ==========================================
-        // 2. INITIALIZATION ON WINDOW LOAD
+         // ==========================================
+        // 2. INITIALIZATION ON WINDOW LOAD & FETCH LIVE JSON
         // ==========================================
         window.onload = function() {
             initLeafletMap();
-            loadDefaultSimulatedData();
             initCharts();
-            updateAllVisualizations();
+            loadLiveAuditDataFromGitHub(); // 👈 Carga automática desde GitHub Pages
             updateTimestamp();
             loadSimulatorPlantDefaults();
         };
