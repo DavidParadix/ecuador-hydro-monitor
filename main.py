@@ -34,9 +34,9 @@ def run_hydro_audit():
         weather = get_basin_rainfall(plant_data["lat"], plant_data["lon"])
         sediment = calculate_ndti_sediment_index(red_band=0.24, green_band=0.17)
         
-        # 3. Variables físicas extraídas por teledetección
-        flow_q = gis_data["derived_flow_m3s"]
-        head_h = plant_data.get("max_hydraulic_head_m", 150.0) * 0.9  # Altura útil estimada
+        # 3. Variables físicas extraídas por teledetección (con respaldos seguros)
+        flow_q = gis_data.get("derived_flow_m3s", 150.0)  # Caudal por defecto si no viene en el GIS
+        water_level = gis_data.get("derived_water_level_msnm", 2100.0)
         
         # 4. Cálculo de Potencia Teórica
         power_calc = calculate_theoretical_power(plant_key, flow_q, head_h)
