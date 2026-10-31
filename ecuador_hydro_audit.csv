@@ -1,5 +1,5 @@
 Plant_Key,Plant_Name,Cota_msnm,Caudal_m3s,Precipitacion_mm,Riesgo_Sedimentos,Potencia_Calculada_MW,Reporte_Oficial_MW,Estado_Auditoria
-mazar,Embalse Mazar (Complejo Paute),2124.0,150.0,7.0,MODERADO (Monitorear desarenadores),170.0,0.0,SUBGENERACION / POSIBLE FALLA
-paute_molino,Central Paute-Molino,2009.0,150.0,22.0,MODERADO (Monitorear desarenadores),795.4,520.0,SUBGENERACION / POSIBLE FALLA
-sopladora,Central Paute-Sopladora,2009.0,150.0,16.2,MODERADO (Monitorear desarenadores),400.75,360.0,NORMAL
-coca_codo_sinclair,Central Coca Codo Sinclair,2009.0,150.0,28.5,MODERADO (Monitorear desarenadores),722.57,850.0,SOBREDECLARACION
+mazar,Embalse Mazar (Complejo Paute),2124.0,150.0,19.0,MODERADO (Monitorear desarenadores),170.0,0.0,SUBGENERACION / POSIBLE FALLA
+paute_molino,Central Paute-Molino,2009.0,150.0,17.9,MODERADO (Monitorear desarenadores),795.4,520.0,SUBGENERACION / POSIBLE FALLA
+sopladora,Central Paute-Sopladora,2009.0,150.0,21.3,MODERADO (Monitorear desarenadores),400.75,360.0,NORMAL
+coca_codo_sinclair,Central Coca Codo Sinclair,2009.0,150.0,19.9,MODERADO (Monitorear desarenadores),722.57,850.0,SOBREDECLARACION
