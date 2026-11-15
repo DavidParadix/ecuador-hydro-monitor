@@ -2,14 +2,14 @@
     {
         "plant_key": "mazar",
         "plant_name": "Embalse Mazar (Complejo Paute)",
-        "timestamp": "2026-11-14T13:14:06.879958+00:00",
+        "timestamp": "2026-11-15T13:42:11.932354+00:00",
         "gis_satellite_data": {
             "raster_source": "Copernicus Sentinel-2 L2A (Cloud Optimized GeoTIFF)",
             "mean_ndwi": 0.6618936555178306,
             "water_area_km2": 5.0,
             "derived_water_level_msnm": 2124.0
         },
-        "basin_rainfall_mm": 12.5,
+        "basin_rainfall_mm": 2.0,
         "sediment_analysis": {
             "ndti_value": 0.171,
             "sediment_risk": "MODERADO (Monitorear desarenadores)"
@@ -34,14 +34,14 @@
     {
         "plant_key": "paute_molino",
         "plant_name": "Central Paute-Molino",
-        "timestamp": "2026-11-14T13:14:11.953349+00:00",
+        "timestamp": "2026-11-15T13:42:12.003448+00:00",
         "gis_satellite_data": {
             "raster_source": "Copernicus Sentinel-2 L2A (Cloud Optimized GeoTIFF)",
             "mean_ndwi": 0.6618936555178306,
             "water_area_km2": 5.0,
             "derived_water_level_msnm": 2009.0
         },
-        "basin_rainfall_mm": 12.5,
+        "basin_rainfall_mm": 23.7,
         "sediment_analysis": {
             "ndti_value": 0.171,
             "sediment_risk": "MODERADO (Monitorear desarenadores)"
@@ -66,14 +66,14 @@
     {
         "plant_key": "sopladora",
         "plant_name": "Central Paute-Sopladora",
-        "timestamp": "2026-11-14T13:14:17.215640+00:00",
+        "timestamp": "2026-11-15T13:42:12.075845+00:00",
         "gis_satellite_data": {
             "raster_source": "Copernicus Sentinel-2 L2A (Cloud Optimized GeoTIFF)",
             "mean_ndwi": 0.6618936555178306,
             "water_area_km2": 5.0,
             "derived_water_level_msnm": 2009.0
         },
-        "basin_rainfall_mm": 12.5,
+        "basin_rainfall_mm": 1.3,
         "sediment_analysis": {
             "ndti_value": 0.171,
             "sediment_risk": "MODERADO (Monitorear desarenadores)"
@@ -98,14 +98,14 @@
     {
         "plant_key": "coca_codo_sinclair",
         "plant_name": "Central Coca Codo Sinclair",
-        "timestamp": "2026-11-14T13:14:22.292345+00:00",
+        "timestamp": "2026-11-15T13:42:12.147126+00:00",
         "gis_satellite_data": {
             "raster_source": "Copernicus Sentinel-2 L2A (Cloud Optimized GeoTIFF)",
             "mean_ndwi": 0.6618936555178306,
             "water_area_km2": 5.0,
             "derived_water_level_msnm": 2009.0
         },
-        "basin_rainfall_mm": 12.5,
+        "basin_rainfall_mm": 2.3,
         "sediment_analysis": {
             "ndti_value": 0.171,
             "sediment_risk": "MODERADO (Monitorear desarenadores)"
